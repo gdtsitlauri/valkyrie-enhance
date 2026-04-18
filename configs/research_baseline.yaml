@@ -1,0 +1,13 @@
+runtime:
+  target_fps: 60
+  vram_budget_gb: 3.5
+  prefer_cuda: true
+  enable_cpu_fallback: true
+quality:
+  scale_factor: 2.0
+  denoise_strength: 0.35
+  sharpen_strength: 0.2
+  temporal_strength: 0.45
+  hdr_strength: 0.3
+  face_boost: 0.25
+  interpolation_factor: 2

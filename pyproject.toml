@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "valkyrie-enhance"
+version = "0.1.0"
+description = "VALKYRIE: AI-powered real-time video and audio enhancement research framework"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "VALKYRIE Contributors" }
+]
+dependencies = [
+  "numpy>=1.26",
+  "opencv-python>=4.8",
+  "torch>=2.2",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+audio = [
+  "librosa>=0.10",
+]
+metrics = [
+  "scikit-image>=0.22",
+]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.scripts]
+valkyrie = "valkyrie.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

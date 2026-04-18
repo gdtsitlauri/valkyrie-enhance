@@ -1,0 +1,9 @@
+{
+  "full_pipeline_psnr": 18.823373290247574,
+  "restoration": 0.24258638951577893,
+  "temporal_consistency": 0.74881713076838,
+  "latency_optimization": 2.0610031474587984,
+  "hdr_reconstruction": -1.8610444383062372,
+  "face_object_enhancement": 2.937817186105434,
+  "upscaling": -19.961288233560815
+}

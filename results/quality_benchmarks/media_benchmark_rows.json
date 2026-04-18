@@ -1,0 +1,42 @@
+[
+  {
+    "system": "valkyrie",
+    "frames": 12,
+    "mean_latency_ms": 16.091355416392616,
+    "mean_fps": 62.145168888711396,
+    "mean_psnr": 20.77805771104744,
+    "mean_ssim": 0.928166851401329,
+    "mean_lpips": 0.0574982234587272,
+    "reference": "bicubic-upscaled input proxy"
+  },
+  {
+    "system": "bicubic",
+    "frames": 12,
+    "mean_latency_ms": 0.16343691656099205,
+    "mean_fps": 6118.568687184061,
+    "mean_psnr": 100.0,
+    "mean_ssim": 1.0,
+    "mean_lpips": 0.0,
+    "reference": "bicubic-upscaled input proxy"
+  },
+  {
+    "system": "lanczos",
+    "frames": 12,
+    "mean_latency_ms": 1.0141946663679846,
+    "mean_fps": 986.0040021519554,
+    "mean_psnr": 39.961687208084804,
+    "mean_ssim": 0.9914818753798803,
+    "mean_lpips": 0.002024702960625291,
+    "reference": "bicubic-upscaled input proxy"
+  },
+  {
+    "system": "sharpen",
+    "frames": 12,
+    "mean_latency_ms": 0.24727883328523603,
+    "mean_fps": 4044.017786376808,
+    "mean_psnr": 37.80095173143596,
+    "mean_ssim": 0.9946451187133789,
+    "mean_lpips": 0.0025429853121750057,
+    "reference": "bicubic-upscaled input proxy"
+  }
+]
