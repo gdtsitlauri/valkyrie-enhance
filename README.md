@@ -5,7 +5,10 @@
 An open source AI research framework for real-time, content-aware video and audio enhancement on budget GPUs. VALKYRIE introduces **VALKYRIE-APEX**, a perceptual coordination engine that intelligently activates and scales 11 enhancement modules based on scene content, under strict GPU memory and latency budgets.
 
 **Author:** George David Tsitlauri  
-**License:** MIT  
+**Affiliation:** Dept. of Informatics & Telecommunications, University of Thessaly, Greece  
+**Contact:** gdtsitlauri@gmail.com  
+**Year:** 2026
+
 **Target hardware:** NVIDIA GTX 1650 (4 GB VRAM, CUDA 12.x, Windows 11)
 
 ---
@@ -118,3 +121,15 @@ tests/                 # Pytest test suite
 ## License
 
 MIT License — Copyright (c) 2026 George David Tsitlauri
+
+## Citation
+
+```bibtex
+@misc{tsitlauri2026valkyrie,
+  author = {George David Tsitlauri},
+  title  = {VALKYRIE: Visual and Audio Luminance Enhancement via Knowledge-driven Yield and Real-time Intelligence Engine},
+  year   = {2026},
+  institution = {University of Thessaly},
+  email  = {gdtsitlauri@gmail.com}
+}
+```
