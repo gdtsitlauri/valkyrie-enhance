@@ -2,13 +2,18 @@
 
 **Visual and Audio Luminance Enhancement via Knowledge-driven Yield and Real-time Intelligence Engine**
 
-**Author:** George David Tsitlauri  
-**Contact:** gdtsitlauri@gmail.com  
-**Website:** gdtsitlauri.dev  
-**GitHub:** github.com/gdtsitlauri  
-**Year:** 2026
 
 VALKYRIE is a research-oriented media-enhancement framework for real-time video and audio processing on budget NVIDIA hardware. The repository combines a modular Python pipeline, optional native CUDA kernels, benchmarking utilities, and TensorRT optimization hooks.
+
+
+## Project Metadata
+
+| Field | Value |
+| --- | --- |
+| Author | George David Tsitlauri |
+| Affiliation | Dept. of Informatics & Telecommunications, University of Thessaly, Greece |
+| Contact | gdtsitlauri@gmail.com |
+| Year | 2026 |
 
 ## Evidence Status
 
@@ -125,13 +130,18 @@ python -m valkyrie benchmark-media --input video.mp4 --output-dir results
 - Add scene-stratified TensorRT vs PyTorch export tables.
 - Extend evaluation to more varied real-world input sets and artifact classes.
 
-## Citation
+## Why VALKYRIE Can Still Be Strong
 
-```bibtex
-@misc{tsitlauri2026valkyrie,
-  author = {George David Tsitlauri},
-  title  = {VALKYRIE: Visual and Audio Luminance Enhancement via Knowledge-driven Yield and Real-time Intelligence Engine},
-  year   = {2026},
-  url    = {https://github.com/gdtsitlauri}
-}
-```
+VALKYRIE is already stronger than a typical enhancement repo because the
+engineering path is real:
+
+- the real-time GTX 1650 path works,
+- throughput artifacts are already committed,
+- TensorRT integration exists,
+- and the missing piece is broader quality validation, not core implementation.
+
+That makes VALKYRIE best presented as a real-time enhancement engineering
+platform with bounded but credible evidence, rather than as a finished public
+quality leaderboard.
+
+
