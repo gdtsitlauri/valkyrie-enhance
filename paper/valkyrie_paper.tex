@@ -1,92 +1,51 @@
 \documentclass[conference]{IEEEtran}
-\usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{booktabs}
+\usepackage{graphicx}
 
 \title{VALKYRIE: Visual and Audio Luminance Enhancement via Knowledge-driven Yield and Real-time Intelligence Engine}
 
 \author{\IEEEauthorblockN{George David Tsitlauri}
-\IEEEauthorblockA{\textit{Dept. of Informatics \& Telecommunications}\\
-\textit{University of Thessaly, Greece}\\
-gdtsitlauri@gmail.com}}
+\IEEEauthorblockA{
+gdtsitlauri@gmail.com\\
+gdtsitlauri.dev\\
+github.com/gdtsitlauri
+}}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-VALKYRIE is a unified research framework for real-time, content-aware enhancement of video and audio streams on budget consumer hardware. The system introduces VALKYRIE-APEX, a perceptual coordination engine that activates, prioritizes, and scales enhancement modules under strict latency and memory budgets. Evaluated on an NVIDIA GTX 1650 (4GB VRAM, CUDA 12.4, Windows 11), VALKYRIE achieves 62--78 FPS in real-time mode across action and film scenarios, while quality mode (Real-ESRGAN) yields PSNR 42.93 dB and SSIM 0.908 on real 720p content.
+VALKYRIE is a research-oriented media-enhancement framework targeting budget NVIDIA hardware. The repository combines a modular enhancement pipeline, optional native CUDA kernels, a real-time benchmarking harness, and TensorRT integration code. The current committed evidence strongly supports the engineering claim that the lightweight real-time path can exceed 60 FPS on selected scene classes on a GTX 1650. The quality-benchmark layer is useful for repository-internal diagnostics, but the committed snapshot should be interpreted cautiously because it does not yet constitute a fully standardized full-reference super-resolution benchmark.
 \end{abstract}
 
 \section{Introduction}
-Modern enhancement systems are fragmented across offline restoration, gaming upscalers, and audio tools. VALKYRIE unifies these capabilities into one adaptive, open source framework targeting budget GPUs that are excluded from closed-source solutions such as NVIDIA DLSS and AMD FSR.
+Open media-enhancement research is often split between high-quality offline systems and fast but opaque application-specific pipelines. VALKYRIE aims to bridge that gap by exposing enhancement modules, benchmarking code, and deployment-oriented optimization hooks in a single repository.
 
-\section{Method}
-VALKYRIE-APEX combines scene detection, resource monitoring, adaptive quality scheduling, and preference learning to coordinate eleven modules in real time. The engine operates with $<$1 ms overhead and maintains a 3.5 GB VRAM budget on GTX 1650.
+\section{Repository Scope}
+The current release includes:
+\begin{itemize}
+\item a Python package for video and audio enhancement,
+\item optional CUDA-native acceleration,
+\item benchmarking and reporting utilities,
+\item TensorRT conversion and speed-comparison support,
+\item committed result summaries for throughput and media benchmarking.
+\end{itemize}
 
-\section{Modules}
-We include upscaling, restoration, temporal consistency, adaptive quality, latency optimization, HDR reconstruction, face and object enhancement, audio enhancement, scene detection, benchmarking, and a perceptual AI engine. The upscaling module provides two paths: (1) a quality path using RealESRGAN (RRDBNet, 23 residual blocks) with pretrained weights, and (2) a real-time path using ESRGANLite (6 residual blocks, PixelShuffle, FP16 inference).
+\section{Real-Time Evidence}
+The strongest current evidence in the repository is the GTX 1650 throughput profile. The committed benchmark summary reports mean frame rates of 78.25 FPS for action scenes and 62.84 FPS for film scenes, with more demanding low-light and game scenarios reducing throughput substantially. These results justify describing VALKYRIE as a credible real-time enhancement engineering project on constrained hardware.
 
-\section{Experimental Protocol}
-All experiments were conducted on a Windows 11 machine with an NVIDIA GTX 1650 (4 GB VRAM), CUDA 12.4, and PyTorch 2.x (cu124). Benchmarks compare against bicubic, Lanczos-4, and sharpened-linear baselines using PSNR, SSIM, LPIPS proxy, FPS, and latency metrics. Quality metrics use the standard super-resolution protocol: frames are downscaled (INTER\_AREA) to simulate LR input, upscaled by each system, and compared against the original HR frame.
+\section{Quality-Benchmark Interpretation}
+The repository also contains a media-quality benchmark summary with metrics such as PSNR, SSIM, and LPIPS. However, the committed snapshot is best treated as a repository-internal diagnostic rather than a definitive public leaderboard. The result files document a proxy-reference workflow, and therefore these numbers should be used to track regressions or relative internal changes, not to claim benchmark superiority over canonical super-resolution baselines.
 
-\section{Results}
+\section{Optimization Path}
+TensorRT integration is implemented directly in \texttt{src/valkyrie/tensorrt\_optimize.py}. This is meaningful evidence of deployment-aware optimization work. At the same time, the current repository should still be presented as a prototype optimization path rather than a mature production deployment stack.
 
-\subsection{Real-time Mode (ESRGANLite, GTX 1650)}
-
-\begin{table}[h]
-\centering
-\caption{FPS and latency by scene type — real-time mode (ESRGANLite, 2$\times$ upscale, GTX 1650)}
-\begin{tabular}{lrrrr}
-\toprule
-Scenario & Mean FPS & Best FPS & Mean Lat. (ms) & Worst Lat. (ms) \\
-\midrule
-Action   & \textbf{78.25} & 79.25 & 12.78  & 12.92  \\
-Film     & 62.84          & 64.13 & 15.92  & 16.48  \\
-Low-light & 45.04         & 63.35 & 49.37  & 116.51 \\
-Game     & 39.14          & 57.19 & 107.04 & 286.00 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Action and film scenarios exceed the 60 FPS target. Low-light and game scenarios involve heavier module activation (HDR reconstruction, denoising) which reduces throughput; the adaptive quality module throttles enhancement to recover frame rate under GPU pressure.
-
-\subsection{Quality Mode (Real-ESRGAN, GTX 1650)}
-
-\begin{table}[h]
-\centering
-\caption{Quality metrics on real 720p video (10 frames, 2$\times$ upscale) — quality mode vs. baselines}
-\begin{tabular}{lrrrr}
-\toprule
-System & PSNR (dB) $\uparrow$ & SSIM $\uparrow$ & LPIPS $\downarrow$ & FPS \\
-\midrule
-\textbf{VALKYRIE (Real-ESRGAN)} & \textbf{42.93} & \textbf{0.908} & \textbf{0.00193} & 0.03 \\
-Lanczos-4   & 76.56 & 0.9997 & 0.000207 & 74  \\
-Sharpened   & 71.60 & 0.9993 & 0.000331 & 91  \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-VALKYRIE quality mode achieves PSNR 42.93 dB and SSIM 0.908 on real 720p content, demonstrating high perceptual quality reconstruction via the pretrained RealESRGAN backbone with tiled inference (tile=256, 15 tiles per 720p frame).
-
-\subsection{Synthetic Benchmark — Quality Mode}
-
-\begin{table}[h]
-\centering
-\caption{Synthetic benchmark — quality mode (Real-ESRGAN)}
-\begin{tabular}{lrrr}
-\toprule
-Scenario  & PSNR (dB) & SSIM   & LPIPS  \\
-\midrule
-Action    & 28.85     & 0.9543 & 0.0089 \\
-Film      & 18.89     & 0.1763 & 0.0655 \\
-Game      & 27.64     & 0.7508 & 0.0249 \\
-Low-light & 16.47     & 0.5231 & 0.0310 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\section{Limitations}
+Three limitations are important. First, the quality-reporting protocol needs a stricter canonical reference design. Second, the evaluation focuses on local GTX 1650 experiments rather than broader hardware sweeps. Third, no live application deployment traces are included in the current artifact set.
 
 \section{Conclusion}
-VALKYRIE provides a transparent foundation for open, reproducible, perceptually guided enhancement research. The framework demonstrates that a unified multi-module enhancement pipeline can achieve 60+ FPS on a budget GTX 1650 in real-time mode, while a quality mode using pretrained Real-ESRGAN yields PSNR 42.93 dB on real video content. All code, weights, and benchmark artifacts are released as open source under the MIT license.
+VALKYRIE is a credible enhancement-engineering repository with real performance evidence, optional TensorRT optimization support, and substantial implementation breadth. Its strongest current contribution is the open real-time pipeline and measurement tooling; stronger full-reference quality claims should wait for a regenerated standardized benchmark suite.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
-  { name = "VALKYRIE Contributors" }
+  { name = "George David Tsitlauri", email = "gdtsitlauri@gmail.com" }
 ]
 dependencies = [
   "numpy>=1.26",

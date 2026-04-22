@@ -2,125 +2,128 @@
 
 **Visual and Audio Luminance Enhancement via Knowledge-driven Yield and Real-time Intelligence Engine**
 
-An open source AI research framework for real-time, content-aware video and audio enhancement on budget GPUs. VALKYRIE introduces **VALKYRIE-APEX**, a perceptual coordination engine that intelligently activates and scales 11 enhancement modules based on scene content, under strict GPU memory and latency budgets.
-
 **Author:** George David Tsitlauri  
-**Affiliation:** Dept. of Informatics & Telecommunications, University of Thessaly, Greece  
 **Contact:** gdtsitlauri@gmail.com  
+**Website:** gdtsitlauri.dev  
+**GitHub:** github.com/gdtsitlauri  
 **Year:** 2026
 
-**Target hardware:** NVIDIA GTX 1650 (4 GB VRAM, CUDA 12.x, Windows 11)
+VALKYRIE is a research-oriented media-enhancement framework for real-time video and audio processing on budget NVIDIA hardware. The repository combines a modular Python pipeline, optional native CUDA kernels, benchmarking utilities, and TensorRT optimization hooks.
 
----
+## Evidence Status
 
-## Results (GTX 1650, CUDA 12.4)
+| Item | Current status |
+| --- | --- |
+| Real-time throughput benchmarks on GTX 1650 | Present |
+| Quality-benchmark artifacts | Present |
+| TensorRT optimization module | Present |
+| Standardized full-reference super-resolution benchmark | Not fully established in the current committed snapshot |
+| Production deployment evidence | Not present |
 
-### Real-time Mode (ESRGANLite architecture, 2× upscale)
+## Research Positioning
 
-| Scenario  | Mean FPS | Best FPS | Mean Latency (ms) |
-|-----------|----------|----------|-------------------|
-| Action    | **78.25** | 79.25   | 12.78             |
-| Film      | **62.84** | 64.13   | 15.92             |
-| Low-light | 45.04    | 63.35    | 49.37             |
-| Game      | 39.14    | 57.19    | 107.04            |
+The strongest claims supported by the committed artifacts are:
 
-### Quality Mode (Real-ESRGAN pretrained, 720p real video)
+> VALKYRIE demonstrates real implementation depth, a credible GTX 1650 real-time pipeline, and optional TensorRT-oriented deployment work. The current quality-benchmark snapshot is useful as an internal diagnostic, but it should not be marketed as a definitive full-reference super-resolution leaderboard.
 
-| System            | PSNR (dB) ↑ | SSIM ↑ | LPIPS ↓ |
-|-------------------|-------------|--------|---------|
-| **VALKYRIE**      | **42.93**   | **0.908** | **0.00193** |
-| Lanczos-4         | 76.56*      | 0.9997 | 0.000207 |
-| Sharpened-linear  | 71.60*      | 0.9993 | 0.000331 |
+## Current Results
 
-*Classical methods compared using standard SR protocol (LR→HR vs original HR).
+### Real-time Mode
 
----
+Source: `results/fps_benchmarks/summary.md`
 
-## Modules
+| Scenario | Mean FPS | Best FPS | Mean Latency (ms) |
+| --- | ---: | ---: | ---: |
+| Action | `78.25` | `79.25` | `12.78` |
+| Film | `62.84` | `64.13` | `15.92` |
+| Low-light | `45.04` | `63.35` | `49.37` |
+| Game | `39.14` | `57.19` | `107.04` |
 
-1. **Upscaling** — ESRGANLite (real-time) + Real-ESRGAN (quality)
-2. **Video Restoration** — denoising, artifact removal, sharpening
-3. **Temporal Consistency** — Farneback optical flow, motion-adaptive blending
-4. **Adaptive Quality** — real-time GPU load monitoring, per-module throttling
-5. **Latency Optimization** — frame interpolation, motion-compensated prediction
-6. **HDR Reconstruction** — ACES filmic tonemapping, BT.709→BT.2020 expansion
-7. **Face & Object Enhancement** — multi-scale unsharp mask, CLAHE, feathered ROI
-8. **Audio Enhancement** — STFT spectral subtraction, overlap-add reconstruction
-9. **Scene Detection** — content classification, per-scene optimal settings
-10. **Benchmark Suite** — PSNR, SSIM, LPIPS proxy, FPS, latency reporting
-11. **Perceptual AI Engine (APEX)** — central coordinator, <1 ms overhead
+These runs support the real engineering claim in the repo: some scene classes can exceed 60 FPS on a GTX 1650 in the lightweight real-time path.
 
----
+### Quality Snapshot
 
-## Quick Start
+Source: `results/quality_benchmarks/media_benchmark_summary.md`
+
+The committed media-quality snapshot reports:
+
+- `VALKYRIE`: mean PSNR `20.78`, mean SSIM `0.9282`, mean LPIPS `0.0575`
+- 12 evaluated frames
+- mean throughput `62.15 FPS` for the tested media benchmark path
+
+Important note:
+
+- the current committed snapshot uses a proxy reference workflow documented in `results/quality_benchmarks/README.md`
+- those numbers are useful for repository-internal regression testing and model-comparison diagnostics
+- they are not a substitute for a fully standardized LR$\rightarrow$HR benchmark with canonical references
+
+## Core Modules
+
+| Module | Purpose |
+| --- | --- |
+| `engine.py` | VALKYRIE coordination logic |
+| `modules/` | enhancement components |
+| `real_benchmarks.py` | media benchmark harness |
+| `reporting.py` | summary/markdown export |
+| `tensorrt_optimize.py` | TensorRT conversion and speed benchmarking |
+| `native/` | optional CUDA extension path |
+
+## TensorRT and Deployment Notes
+
+TensorRT support is implemented in `src/valkyrie/tensorrt_optimize.py` and exposed through the optional dependency group in `pyproject.toml`. This is valid evidence of deployment-oriented optimization work, but it should still be described as prototype integration rather than mature production serving.
+
+## Repository Layout
+
+```text
+src/valkyrie/
+  modules/
+  engine.py
+  real_benchmarks.py
+  reporting.py
+  tensorrt_optimize.py
+native/
+configs/
+paper/
+results/
+  fps_benchmarks/
+  quality_benchmarks/
+  ablation/
+tests/
+```
+
+## Reproducibility
+
+Install:
 
 ```bash
 pip install -e .[dev,metrics,audio]
+```
+
+Optional TensorRT extras:
+
+```bash
+pip install -e .[tensorrt]
+```
+
+Run:
+
+```bash
 pytest
-python -m valkyrie demo
 python -m valkyrie benchmark --output-dir results
 python -m valkyrie benchmark-media --input video.mp4 --output-dir results
 ```
 
-### Process a video (quality mode)
-```bash
-python -m valkyrie process-video --input input.mp4 --output output.mp4 --max-frames 60
-```
+## Limitations
 
-### Process a video (real-time mode)
-```bash
-python -m valkyrie process-video --input input.mp4 --output output.mp4 --config configs/realtime.yaml --max-frames 60
-```
+- The strongest evidence is on throughput, not on standardized perceptual quality leadership.
+- Quality reporting needs a cleaner fully standardized reference protocol for headline comparison.
+- The repository does not yet include deployment traces from a live application stack.
 
-### Build native CUDA extension (Windows, VS 2022 + CUDA 12.4)
-```bash
-cd native
-set DISTUTILS_USE_SDK=1
-python build_native.py build_ext --inplace
-```
+## Future Work
 
----
-
-## Repository Layout
-
-```
-src/valkyrie/          # Core Python package
-  modules/             # 11 enhancement modules
-  engine.py            # VALKYRIE-APEX coordinator
-  metrics.py           # PSNR, SSIM, LPIPS proxy
-  real_benchmarks.py   # Real-media SR benchmark harness
-  experiments.py       # Synthetic benchmarks & ablation
-  monitoring.py        # GPU/CPU resource monitoring
-native/                # CUDA C++ kernels
-  valkyrie_native.cpp  # PyTorch extension bindings
-  valkyrie_native_kernel.cu  # Bilinear, bilateral, ACES, temporal kernels
-configs/               # YAML configs
-  realtime.yaml        # ESRGANLite real-time mode
-  research_baseline.yaml
-paper/                 # IEEE paper
-  valkyrie_paper.tex
-results/               # Benchmark artifacts
-  quality_benchmarks/
-  fps_benchmarks/
-  ablation/
-integrations/reshade/  # Windows ReShade scaffolding
-tests/                 # Pytest test suite
-```
-
----
-
-## Novel Contributions
-
-- **VALKYRIE-APEX**: first content-aware perceptual AI engine for coordinating multi-module real-time video enhancement
-- **Unified framework**: video + audio + gaming enhancement in one open source pipeline
-- **Budget GPU focus**: designed for GTX 1650, excluded from DLSS/FSR
-- **Dual-mode upscaling**: real-time ESRGANLite + quality Real-ESRGAN in one codebase
-
----
-
-## License
-
-MIT License — Copyright (c) 2026 George David Tsitlauri
+- Regenerate media-quality benchmarks with a strict canonical reference protocol.
+- Add scene-stratified TensorRT vs PyTorch export tables.
+- Extend evaluation to more varied real-world input sets and artifact classes.
 
 ## Citation
 
@@ -129,7 +132,6 @@ MIT License — Copyright (c) 2026 George David Tsitlauri
   author = {George David Tsitlauri},
   title  = {VALKYRIE: Visual and Audio Luminance Enhancement via Knowledge-driven Yield and Real-time Intelligence Engine},
   year   = {2026},
-  institution = {University of Thessaly},
-  email  = {gdtsitlauri@gmail.com}
+  url    = {https://github.com/gdtsitlauri}
 }
 ```

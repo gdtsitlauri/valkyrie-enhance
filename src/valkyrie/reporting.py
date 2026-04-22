@@ -68,11 +68,14 @@ def write_media_benchmark_summary(rows: list[dict[str, object]], destination: st
     lines = [
         "# Media Benchmark Summary",
         "",
-        "| System | Frames | Mean FPS | Mean Latency (ms) | Mean PSNR | Mean SSIM | Mean LPIPS |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "These rows combine throughput with an LR->HR super-resolution protocol.",
+        "Interpret the quality columns only within the stated reference protocol; do not use them as a generic visual-quality leaderboard without inspecting the underlying benchmark harness.",
+        "",
+        "| System | Frames | Mean FPS | Mean Latency (ms) | Mean PSNR | Mean SSIM | Mean LPIPS | Reference |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in rows:
         lines.append(
-            f"| {row['system']} | {row['frames']} | {row['mean_fps']:.2f} | {row['mean_latency_ms']:.2f} | {row['mean_psnr']:.2f} | {row['mean_ssim']:.4f} | {row['mean_lpips']:.4f} |"
+            f"| {row['system']} | {row['frames']} | {row['mean_fps']:.2f} | {row['mean_latency_ms']:.2f} | {row['mean_psnr']:.2f} | {row['mean_ssim']:.4f} | {row['mean_lpips']:.4f} | {row.get('reference', 'unspecified')} |"
         )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
